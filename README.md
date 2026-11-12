@@ -37,18 +37,25 @@ public browser bundle.
 
 ### Backend
 
-- Use PHP 8.4.1 or later and install production dependencies with
-  `composer install --no-dev --optimize-autoloader`.
-- Set provider environment variables for `APP_ENV=production`,
-  `APP_DEBUG=false`, a generated `APP_KEY`, the production `APP_URL`, database
-  connection, `FRONTEND_URL`, and `CORS_ALLOWED_ORIGINS`.
-- Run `php artisan migrate --force` as part of deployment, then
-  `php artisan storage:link`. Create the first admin on the backend host with
+- The backend includes a Docker setup for Render. Create a Web Service from
+  this repository, select Docker, set the Root Directory to `BA-Backend`, and
+  use `/up` as the health check path. The image installs production Composer
+  dependencies and runs migrations when the service starts.
+- Set backend environment variables in Render, not in GitHub. At minimum,
+  configure `APP_KEY`, `APP_URL`, `DB_CONNECTION=pgsql`, `DB_URL`,
+  `FRONTEND_URL`, and `CORS_ALLOWED_ORIGINS`. Also set `APP_ENV=production`,
+  `APP_DEBUG=false`, and `GEMINI_API_KEY` if the advisor is enabled.
+- Generate a production key with `php artisan key:generate --show` from the
+  backend directory and enter the result directly into Render's environment
+  settings. Do not commit or share the key.
+- The container runs `php artisan migrate --force` and `php artisan storage:link`
+  at startup. Create the first admin on the backend host with
   `php artisan admin:create`.
 - Configure a real mail transport if password-reset email is required.
-- Uploaded images use Laravel's public disk. Use persistent storage or
-  configure object storage (for example S3-compatible storage) before relying
-  on uploads across redeployments.
+- Uploaded images use Laravel's public disk. Render's Free web services have
+  ephemeral storage, so uploaded images can disappear on restarts or spin-down.
+  To keep them, use a paid Render persistent disk mounted at
+  `/var/www/html/storage/app/public`, or configure external object storage.
 
 ### Frontend on Vercel
 
