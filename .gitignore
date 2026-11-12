@@ -1,0 +1,21 @@
+# Environment files and secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies and generated output
+**/node_modules/
+**/vendor/
+**/dist/
+**/build/
+**/public/build/
+
+# Local data and logs
+**/database/*.sqlite*
+**/storage/logs/*.log
+**/*.log
+**/.phpunit.result.cache
+
+# OS/editor files
+.DS_Store
+Thumbs.db
